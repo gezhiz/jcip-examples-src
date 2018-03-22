@@ -35,7 +35,7 @@ public class ConcurrentPuzzleSolver <P, M> {
             P p = puzzle.initialPosition();
             exec.execute(newTask(p, null, null));
             // block until solution found
-            PuzzleNode<P, M> solnPuzzleNode = solution.getValue();
+            PuzzleNode<P, M> solnPuzzleNode = solution.getValue();//阻塞直到找到结果
             return (solnPuzzleNode == null) ? null : solnPuzzleNode.asMoveList();
         } finally {
             exec.shutdown();
@@ -54,6 +54,7 @@ public class ConcurrentPuzzleSolver <P, M> {
         public void run() {
             if (solution.isSet()
                     || seen.putIfAbsent(pos, true) != null)
+                //已经找到解答或者已经遍历过这个位置
                 return; // already solved or seen this position
             if (puzzle.isGoal(pos))
                 solution.setValue(this);

@@ -21,7 +21,7 @@ public class CellularAutomata {
                 //关卡行为，当所有线程通过关卡时，会在一个子任务中执行关卡行为
                 new Runnable() {
                     public void run() {
-                        mainBoard.commitNewValues();
+                        mainBoard.commitNewValues();//,在所有工作线程都执行完成之后，提交计算结果给数据模型
                     }});
         this.workers = new Worker[count];
         for (int i = 0; i < count; i++)
@@ -34,9 +34,10 @@ public class CellularAutomata {
         public Worker(Board board) { this.board = board; }
         public void run() {
             while (!board.hasConverged()) {
+                //耗时操作
                 for (int x = 0; x < board.getMaxX(); x++)
                     for (int y = 0; y < board.getMaxY(); y++)
-                        board.setNewValue(x, y, computeValue(x, y));//耗时操作
+                        board.setNewValue(x, y, computeValue(x, y));
                 try {
                     //该方法会一直阻塞知道所有的线程到达关卡点
                     barrier.await();//该方法会为每一个线程返回到达索引号
